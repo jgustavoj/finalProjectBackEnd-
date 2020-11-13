@@ -30,6 +30,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+        #line 32 self.usernname? correct?
 
     def serialize(self):
         return {
@@ -51,6 +52,8 @@ class Events(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.user_id
+
+        #line 54 self.user_id correct?
 
     def serialize(self):
         return {
