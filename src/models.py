@@ -24,13 +24,13 @@ class User(db.Model):
     first_name = db.Column(db.String(250), unique=False, nullable=False)
     last_name = db.Column(db.String(250), unique=False, nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
-    phone_number = db.Column(db.int(250), unique=False, nullable=False)
+    phone_number = db.Column(db.Integer, unique=False, nullable=False)
     password = db.Column(db.String(80), unique=True, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.username
-        #line 32 self.usernname? correct?
+        return '<User %r>' % self.email
+      
 
     def serialize(self):
         return {
@@ -44,16 +44,16 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
 
-class Events(db.Model):
+class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.int(250), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, unique=True, nullable=False)
     title = db.Column(db.String(250), unique=False, nullable=False)
-    start_date = db.Column(db.int(80), unique=False, nullable=False)
+    start_date = db.Column(db.Integer, unique=False, nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.user_id
+        return '<User %r>' % self.title
 
-        #line 54 self.user_id correct?
+        
 
     def serialize(self):
         return {
@@ -62,4 +62,3 @@ class Events(db.Model):
             "title": self.title,
             "start_date": self.start_date,
             # do not serialize the password, its a security breach
-        }
