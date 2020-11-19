@@ -39,7 +39,6 @@ class User(db.Model):
             "last_name": self.last_name,
             "email": self.email,
             "phone_number": self.phone_number,
-            "password": self.password,
             "is_active": self.is_active,
             # do not serialize the password, its a security breach
         }
@@ -61,4 +60,5 @@ class Event(db.Model):
             "user_id": self.user_id,
             "title": self.title,
             "start_date": self.start_date,
+        }
             # do not serialize the password, its a security breach

@@ -1,17 +1,18 @@
 from twilio.rest import Client
 import os
 
-def send(body='Some body', to=''):
+def send(body='', to='+13057984105'):
     # Your Account Sid and Auth Token from twilio.com/console
     # DANGER! This is insecure. See http://twil.io/secure
-    account_sid = 'ACebcf1c431d0537bdb929713268a2e58f'
-    auth_token = 'b8c38652760d2384938d6c1041831ad0'
+    account_sid = 'AC94e8b0d3e7dd7969485fbc45b982abda'
+    auth_token = 'aaffc0412f30ea9cc374a3d3e6bbc075'
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
         body=body,
-        from_='+12013899753',
-        to='+19546465110'
+        from_='+12546025189',
+        to='+13057984105'
     )
 
     print(message.sid)
+
