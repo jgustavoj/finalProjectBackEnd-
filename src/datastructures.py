@@ -20,35 +20,6 @@ class Notifications:
             "startDate": "27-11-2020",
             "id": 1,
             "location": "Room 1"
-        },
-        # CLEAR BELOW AFTER TONIGHT!!! PLEASEEEE 
-        {
-            "title": "Website Re-Design Plan 1",
-            "startDate": "21-11-2020",
-            
-            "id": 0,
-            "location": "Room 1"
-        },
-        {
-            "title": "Website Re-Design Plan 2",
-            "startDate": "21-11-2020",
-            
-            "id": 0,
-            "location": "Room 1"
-        },
-        {
-            "title": "Website Re-Design Plan 3 ",
-            "startDate": "21-11-2020",
-            
-            "id": 0,
-            "location": "Room 1"
-        },
-        {
-            "title": "Website Re-Design Plan 4",
-            "startDate": "21-11-2020",
-            
-            "id": 0,
-            "location": "Room 1"
         }
             ]
 

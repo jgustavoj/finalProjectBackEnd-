@@ -92,7 +92,7 @@ def dequeue():
     event = notification.dequeue()
     event_name = event['title']
     event_date = event['startDate']
-    send(body= event_name + " is coming up on " + event_date)
+    send(body="Your " + event_name + " is coming up on " + event_date)
     return jsonify("Texted"), 200    
 
 
