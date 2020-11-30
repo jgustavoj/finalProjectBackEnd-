@@ -45,8 +45,8 @@ class User(db.Model):
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=False, nullable=False)
-    startDate = db.Column(db.Integer, unique=False, nullable=False)
-    endDate = db.Column(db.Integer, unique=False, nullable=False)
+    startDate = db.Column(db.DateTime, unique=False, nullable=False)
+    endDate = db.Column(db.DateTime, unique=False, nullable=False)
     location = db.Column(db.String(250), unique=False, nullable=False)
 
     def __repr__(self):
@@ -61,7 +61,7 @@ class Appointment(db.Model):
             "endDate": self.endDate,
             "location": self.location,
         }
-        
+       
 
 
 

@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Event
+from models import db, User, Event, Appointment
 from sms import send
 import datetime
 from datastructures import Notifications 
@@ -86,6 +86,29 @@ def sitemap():
 #     event_query = Event.query.all()
 #     all_event = list(map(lambda x: x.serialize(), event_query))
 #     return jsonify(all_event), 200
+@app.route('/appointments', methods=['POST', 'GET'])
+def handle_appointment():
+    """
+    Create an appoitnment
+    """
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+       
+        appointment = Appointment(title=body['title'], startDate=body['startDate'], endDate=body['endDate'], location=body['location'])
+        db.session.add(appointment)
+        db.session.commit()
+        return "ok", 200
+    # GET request
+    if request.method == 'GET':
+        appointment = Appointment.query.all()
+        appointment = list(map(lambda x: x.serialize(), appointment))
+        return jsonify(appointment), 200
+    return "Invalid Method", 404
+
+
 
 @app.route('/notification', methods=['DELETE'])
 def dequeue():
