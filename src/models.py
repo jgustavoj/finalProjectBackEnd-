@@ -55,7 +55,6 @@ class Appointment(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            #"user_id": self.user_id,
             "title": self.title,
             "startDate": self.startDate,
             "endDate": self.endDate,
