@@ -62,24 +62,3 @@ class Appointment(db.Model):
         }
        
 
-
-
-class Event(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, unique=True, nullable=False)
-    title = db.Column(db.String(250), unique=False, nullable=False)
-    start_date = db.Column(db.Integer, unique=False, nullable=False)
-
-    def __repr__(self):
-        return '<User %r>' % self.title
-
-        
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "title": self.title,
-            "start_date": self.start_date,
-        }
-            # do not serialize the password, its a security breach
