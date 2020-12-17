@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Event, Appointment
+from models import db, User, Appointment
 from sms import send
 import datetime
 from datastructures import Notifications 
@@ -108,15 +108,29 @@ def handle_appointment():
         return jsonify(appointment), 200
     return "Invalid Method", 404
 
+# DELETE request no Twilio 
+@app.route('/appointments/<int:id>', methods=['DELETE'])
+def delete_item(id):
+    appointment = Appointment.query.get(id)
+    if appointment is None:
+        raise APIException('Appointment not found', status_code=404)
+    db.session.delete(appointment)
+    db.session.commit()
+    appointment = Appointment.query.all()
+    appointment = list(map(lambda x: x.serialize(), appointment))
+    return jsonify(appointment), 200
 
 
-@app.route('/notification', methods=['DELETE'])
-def dequeue():
-    event = notification.dequeue()
-    event_name = event['title']
-    event_date = event['startDate']
-    send(body="Your " + event_name + " is coming up on " + event_date)
-    return jsonify("Texted"), 200    
+
+#this delete method is only used for TWILIO 
+# @app.route('/notification', methods=['DELETE'])
+# def dequeue():
+#     event = notification.dequeue()
+#     event_name = event['title']
+#     event_date = event['startDate']
+#     send(body="Your " + event_name + " is coming up on " + event_date)
+#     return jsonify("Texted"), 200    
+
 
 
 # this only runs if `$ python src/main.py` is executed
