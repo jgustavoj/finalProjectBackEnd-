@@ -86,6 +86,26 @@ def sitemap():
 #     event_query = Event.query.all()
 #     all_event = list(map(lambda x: x.serialize(), event_query))
 #     return jsonify(all_event), 200
+@app.route('/appointments/<int:id>', methods=['PUT', 'GET'])
+def handle_appointment_update(id):
+    """
+    Update Appointment
+    """
+    body = request.get_json() 
+    if request.method == 'PUT':
+        appointment = Appointment.query.get(id)
+        appointment.title = body["title"]
+        appointment.location = body["location"]
+        appointment.startDate = body["startDate"]
+        appointment.endDate = body["endDate"]
+        db.session.commit()
+        return jsonify(appointment.serialize()), 200
+    if request.method == 'GET':
+        appointment = Appointment.query.get(id)
+        return jsonify(appointment.serialize()), 200
+
+    return "Invalid Method", 404
+
 @app.route('/appointments', methods=['POST', 'GET'])
 def handle_appointment():
     """
