@@ -94,6 +94,7 @@ def handle_appointment_update(id):
     body = request.get_json() 
     if request.method == 'PUT':
         appointment = Appointment.query.get(id)
+        # appointment = Appointment(title=body['title'], startDate=body['startDate'], endDate=body['endDate'], location=body['location'], id=body['id'])
         appointment.title = body["title"]
         appointment.location = body["location"]
         appointment.startDate = body["startDate"]
@@ -102,8 +103,9 @@ def handle_appointment_update(id):
         return jsonify(appointment.serialize()), 200
     if request.method == 'GET':
         appointment = Appointment.query.get(id)
-        return jsonify(appointment.serialize()), 200
-
+        appointment = list(map(lambda x: x.serialize(), appointment))
+        return jsonify(appointment), 200
+        #return jsonify(appointment.serialize()), 200
     return "Invalid Method", 404
 
 @app.route('/appointments', methods=['POST', 'GET'])
