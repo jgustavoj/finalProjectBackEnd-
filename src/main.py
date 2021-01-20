@@ -27,31 +27,6 @@ db.init_app(app)
 CORS(app)
 setup_admin(app)
 
-# Setup the Flask-JWT-Extended extension
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
-jwt = JWTManager(app)
-
-@app.route('/login', methods=['POST'])
-def login():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
-
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
-    if not username:
-        return jsonify({"msg": "Missing username parameter"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
-
-    if username != 'test' or password != 'test':
-        return jsonify({"msg": "Bad username or password"}), 401
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token), 200
-
-
-notification = Notifications()
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -63,57 +38,97 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-# @app.route('/user', methods=['GET'])
-# def handle_hello():
 
-#     response_body = {
-#         "msg": "Hello, this is your GET /user response "
-#     }
+"""
+JWT Login Route Thread
 
-#     return jsonify(response_body), 200
-
-# @app.route('/process_notifications', methods=['GET'])
-# def process_notifications():
-#     events_query = Event.query.all()
-#     all_events = list(map(lambda x: x.serialize(), events_query))
-#     today_date = datetime.datetime.now()
-#     year_date = today_date[0:4]
-#     month_date = today_date[5:7]
-#     day_date = today_date[8:10]
-
-#     x = datetime.datetime(year, month, day)
-#     y = datetime.datetime(start_year, start_month, start_day)
-#     z = y - x
-
-#         for event in all_events: 
-#             if z == 1:
-# 	            send(body="Your event is one day away")
-#             if z == 7:
-# 	            send(body="Your event is one week away")
-    
-#         return jsonify(), 200   
-
-# @app.route('/events', methods=['POST'])
-# def post_item():
-#     request_body = json.loads(request.data)
-#     event = Event(startDate=request_body["startDate"], title=request_body["title"])
-#     db.session.add(event)
-#     db.session.commit()
-#     event_query = Event.query.all()
-#     all_event = list(map(lambda x: x.serialize(), event_query))
-#     return jsonify(all_event), 200
+"""
 
 
-# @app.route('/events/<int:id>', methods=['DELETE'])
-# def delete_item(id):
-#     event = Event.query.get(id)
-#     if event is None:
-#         raise APIException('event not found', status_code=404)
-#     db.session.delete(event)
-#     db.session.commit()
-#     event_query = Event.query.all()
-#     all_event = list(map(lambda x: x.serialize(), event_query))
-#     return jsonify(all_event), 200
+# Setup the Flask-JWT-Extended extension
+app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+jwt = JWTManager(app)
+
+@app.route('/login', methods=['POST'])
+def login():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    if not email:
+        return jsonify({"msg": "Missing email parameter"}), 400
+    if not password:
+        return jsonify({"msg": "Missing password parameter"}), 400
+    # this line filters the Users db and checks if email = "dynamic" email, meaning - did the user register the email into the db 
+    user_check = User.query.filter_by(email=email).first()
+    print("$$$ ", user_check)
+    if email != email or password != password:
+        return jsonify({"msg": "Incorrect email or password, please try again"}), 401
+
+    # Identity can be any data that is json serializable
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token), 200
+
+
+"""
+User Routes Thread
+
+"""
+
+@app.route('/user', methods=['POST', 'GET'])
+def handle_user():
+    """
+    Create Single User
+
+    """
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        user = User(email=body['email'], password=body['password'], first_name=body['first_name'], last_name=body["last_name"], phone_number=body["phone_number"]) #, is_active=body["is_active"])
+        db.session.add(user)
+        db.session.commit()
+        return "ok", 200
+    # GET request
+    if request.method == 'GET':
+        user = User.query.all()
+        user = list(map(lambda x: x.serialize(), user))
+        return jsonify(user), 200
+    return "Invalid Method", 404
+
+
+@app.route('/user/<int:id>', methods=['PUT', 'GET'])
+def get_single_user(id):
+    """
+    Update Single user
+
+    """
+    body = request.get_json() #{ 'email': 'new_email'}
+    # PUT Method
+    if request.method == 'PUT':
+        user = User.query.get(id)
+        user.email = body["email"]
+        user.password = body["password"]
+        db.session.commit()
+        return jsonify(user.serialize()), 200
+    # GET Method
+    if request.method == 'GET':
+        user = User.query.get(id)
+        user = list(map(lambda x: x.serialize(), user))
+        return jsonify(user), 200
+
+
+    return "Invalid Method", 404
+
+
+""" 
+Appointment Routes Thread
+
+"""
+
+
 @app.route('/appointments/<int:id>', methods=['PUT', 'GET'])
 def handle_appointment_update(id):
     """
@@ -171,6 +186,12 @@ def delete_item(id):
     return jsonify(appointment), 200
 
 
+"""
+
+Twillio Routes Thread
+
+"""
+# notification = Notifications()
 
 #this delete method is only used for TWILIO 
 # @app.route('/notification', methods=['DELETE'])
@@ -183,8 +204,9 @@ def delete_item(id):
 
 
 
+
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
-

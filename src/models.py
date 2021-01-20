@@ -10,7 +10,6 @@ class User(db.Model):
     email = db.Column(db.String(250), unique=True, nullable=False)
     phone_number = db.Column(db.Integer, unique=False, nullable=False)
     password = db.Column(db.String(80), unique=True, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
         return '<User %r>' % self.email
@@ -23,7 +22,6 @@ class User(db.Model):
             "last_name": self.last_name,
             "email": self.email,
             "phone_number": self.phone_number,
-            "is_active": self.is_active,
             # do not serialize the password, its a security breach
         }
 class Appointment(db.Model):
