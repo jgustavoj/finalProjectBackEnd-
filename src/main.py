@@ -43,7 +43,8 @@ def sitemap():
 JWT Login Route Thread
 
 """
-
+# if updating the password in User the login still receives a token. It should receive an error message that password or email wrong 
+# work on this 
 
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
@@ -63,7 +64,7 @@ def login():
     # this line filters the Users db and checks if email = "dynamic" email, meaning - did the user register the email into the db 
     user_check = User.query.filter_by(email=email).first()
     print("$$$ ", user_check)
-    if email != email or password != password:
+    if email != email and password != password:
         return jsonify({"msg": "Incorrect email or password, please try again"}), 401
 
     # Identity can be any data that is json serializable
@@ -87,7 +88,7 @@ def handle_user():
         body = request.get_json()
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
-        user = User(email=body['email'], password=body['password'], first_name=body['first_name'], last_name=body["last_name"], phone_number=body["phone_number"]) #, is_active=body["is_active"])
+        user = User(email=body['email'], password=body['password'], first_name=body['first_name'], last_name=body["last_name"], phone_number=body["phone_number"]) 
         db.session.add(user)
         db.session.commit()
         return "ok", 200
@@ -111,6 +112,9 @@ def get_single_user(id):
         user = User.query.get(id)
         user.email = body["email"]
         user.password = body["password"]
+        user.first_name = body["first_name"]
+        user.last_name = body["last_name"]
+        user.phone_number = body["phone_number"]
         db.session.commit()
         return jsonify(user.serialize()), 200
     # GET Method
@@ -118,9 +122,23 @@ def get_single_user(id):
         user = User.query.get(id)
         user = list(map(lambda x: x.serialize(), user))
         return jsonify(user), 200
-
-
     return "Invalid Method", 404
+
+@app.route('/user/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    """
+    Delete Single User
+    
+    """
+
+    user = User.query.get(id)
+    if user is None:
+        raise APIException('User not found', status_code=404)
+    db.session.delete(user)
+    db.session.commit()
+    user = User.query.all()
+    user = list(map(lambda x: x.serialize(), user))
+    return jsonify(user), 200
 
 
 """ 
