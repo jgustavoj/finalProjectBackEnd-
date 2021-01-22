@@ -43,8 +43,6 @@ def sitemap():
 JWT Login Route Thread
 
 """
-# if updating the password in User the login still receives a token. It should receive an error message that password or email wrong 
-# work on this 
 
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
@@ -62,15 +60,14 @@ def login():
     if not password:
         return jsonify({"msg": "Missing password parameter"}), 400
     # this line filters the Users db and checks if email = "dynamic" email, meaning - did the user register the email into the db 
-    user_check = User.query.filter_by(email=email).first()
-    print("$$$ ", user_check)
-    if email != email and password != password:
+    user_check = User.query.filter_by(email=email, password=password).first()
+    # print("$$$ ", user_check)
+    if user_check==None:  
         return jsonify({"msg": "Incorrect email or password, please try again"}), 401
-
+    
     # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=user_check.id) # passing users id to receive information (not working, read documentation for identity)
     return jsonify(access_token=access_token), 200
-
 
 """
 User Routes Thread
@@ -155,7 +152,6 @@ def handle_appointment_update(id):
     body = request.get_json() 
     if request.method == 'PUT':
         appointment = Appointment.query.get(id)
-        # appointment = Appointment(title=body['title'], startDate=body['startDate'], endDate=body['endDate'], location=body['location'], id=body['id'])
         appointment.title = body["title"]
         appointment.location = body["location"]
         appointment.startDate = body["startDate"]
@@ -170,17 +166,18 @@ def handle_appointment_update(id):
     return "Invalid Method", 404
 
 @app.route('/appointments', methods=['POST', 'GET'])
+@jwt_required # this requires a valid access toke in the request to access. Look at line appointment = Appointment(title etc..)
 def handle_appointment():
     """
     Create an appoitnment
     """
+    user_id= get_jwt_identity() # from jwt to recognize the user - belongs to specific user. This line is ONLY used if were creating relationship between 2 databases. 
     # POST request
     if request.method == 'POST':
         body = request.get_json()
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
-       
-        appointment = Appointment(title=body['title'], startDate=body['startDate'], endDate=body['endDate'], location=body['location'])
+        appointment = Appointment(title=body['title'], startDate=body['startDate'], endDate=body['endDate'], location=body['location'],  user_id=user_id) # user_id=user_id is from db (user id from user) 
         db.session.add(appointment)
         db.session.commit()
         return "ok", 200
