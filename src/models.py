@@ -30,6 +30,7 @@ class User(db.Model):
         
             # do not serialize the password, its a security breach
         }
+        
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=False, nullable=False)

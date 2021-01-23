@@ -169,7 +169,7 @@ def handle_appointment_update(id):
 @jwt_required # this requires a valid access toke in the request to access. Look at line appointment = Appointment(title etc..)
 def handle_appointment():
     """
-    Create an appoitnment
+    Create an appoitnment with user relationship 
     """
     user_id= get_jwt_identity() # from jwt to recognize the user - belongs to specific user. This line is ONLY used if were creating relationship between 2 databases. 
     # POST request
