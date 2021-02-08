@@ -40,9 +40,11 @@ def sitemap():
 
 
 """
-JWT Login Route Thread
+JWT Login Route Thread 
 
 """
+
+#login was commented for frontend login testing 
 
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
@@ -164,6 +166,8 @@ def handle_appointment_update(id):
         return jsonify(appointment), 200
         #return jsonify(appointment.serialize()), 200
     return "Invalid Method", 404
+
+
 
 @app.route('/appointments', methods=['POST', 'GET'])
 @jwt_required # this requires a valid access toke in the request to access. Look at line appointment = Appointment(title etc..)
