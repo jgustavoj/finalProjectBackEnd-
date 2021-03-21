@@ -87,7 +87,7 @@ def handle_user():
         body = request.get_json()
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
-        user = User(email=body['email'], password=body['password'], first_name=body['first_name'], last_name=body["last_name"], phone_number=body["phone_number"]) 
+        user = User(first_name=body['first_name'], last_name=body["last_name"], email=body['email'], phone_number=body["phone_number"], password=body['password']) 
         db.session.add(user)
         db.session.commit()
         return "ok", 200
