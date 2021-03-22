@@ -68,8 +68,13 @@ def login():
         return jsonify({"msg": "Incorrect email or password, please try again"}), 401
     
     # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=user_check.id) # passing users id to receive information (not working, read documentation for identity)
-    return jsonify(access_token=access_token), 200
+    user = {    
+        'access_token': create_access_token(identity=user_check.id),
+        'user_info':  user_check.serialize()
+    }
+    return jsonify(user), 200
+    # access_token = create_access_token(identity=user_check.id) 
+    # return jsonify(access_token=access_token), 200
 
 """
 User Routes Thread
