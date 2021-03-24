@@ -68,13 +68,15 @@ def login():
         return jsonify({"msg": "Incorrect email or password, please try again"}), 401
     
     # Identity can be any data that is json serializable
-    user = {    
-        'access_token': create_access_token(identity=user_check.id),
-        'user_info':  user_check.serialize()
-    }
-    return jsonify(user), 200
-    # access_token = create_access_token(identity=user_check.id) 
-    # return jsonify(access_token=access_token), 200
+    # user = {    
+    #     'access_token': create_access_token(identity=user_check.id),
+    #     'user_info':  user_check.serialize()
+    # }
+    expires = datetime.timedelta(days=7)
+    access_token = create_access_token(identity=email, expires_delta=expires) 
+
+    # return jsonify(user), 200
+    return jsonify(access_token), 200
 
 """
 User Routes Thread
@@ -152,6 +154,7 @@ Appointment Routes Thread
 
 
 @app.route('/appointments/<int:id>', methods=['PUT', 'GET'])
+@jwt_required
 def handle_appointment_update(id):
     """
     Update Appointment
@@ -199,6 +202,7 @@ def handle_appointment():
 
 # DELETE request no Twilio 
 @app.route('/appointments/<int:id>', methods=['DELETE'])
+@jwt_required
 def delete_item(id):
     appointment = Appointment.query.get(id)
     if appointment is None:
