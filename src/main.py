@@ -73,7 +73,7 @@ def login():
     #     'user_info':  user_check.serialize()
     # }
     expires = datetime.timedelta(days=7)
-    access_token = create_access_token(identity=email, expires_delta=expires) 
+    access_token = create_access_token(identity=user_check.id, expires_delta=expires) 
 
     # return jsonify(user), 200
     return jsonify(access_token), 200
